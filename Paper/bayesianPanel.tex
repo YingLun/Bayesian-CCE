@@ -1,0 +1,150 @@
+% $Id: jfesample.tex,v 19:a118fd22993e 2013/05/24 04:57:55 stanton $
+\documentclass[12pt]{article}
+
+% DEFAULT PACKAGE SETUP
+
+\usepackage{setspace,graphicx,epstopdf,amsmath,amsfonts,amssymb,amsthm,versionPO}
+\usepackage{marginnote,datetime,enumitem,subfigure,rotating,fancyvrb}
+\usepackage{hyperref,float}
+\usepackage{natbib}
+\usepackage{amsopn,float,fullpage,layouts,mathtools,multirow,pdfpages,tensor}
+\usepackage[ampersand]{easylist}
+\usepackage[affil-it]{authblk}
+\usepackage{bm}
+\usepackage{longtable}
+
+\usdate
+
+% These next lines allow including or excluding different versions of text
+% using versionPO.sty
+
+\excludeversion{notes}		% Include notes?
+\includeversion{links}      % Turn hyperlinks on?
+
+% Turn off hyperlinking if links is excluded
+\iflinks{}{\hypersetup{draft=true}}
+
+% Notes options
+\ifnotes{%
+\usepackage[margin=1in,paperwidth=10in,right=2.5in]{geometry}%
+\usepackage[textwidth=1.4in,shadow,colorinlistoftodos]{todonotes}%
+}{%
+\usepackage[margin=1in]{geometry}%
+\usepackage[disable]{todonotes}%
+}
+
+% Allow todonotes inside footnotes without blowing up LaTeX
+% Next command works but now notes can overlap. Instead, we'll define 
+% a special footnote note command that performs this redefinition.
+%\renewcommand{\marginpar}{\marginnote}%
+
+% Save original definition of \marginpar
+\let\oldmarginpar\marginpar
+
+% Workaround for todonotes problem with natbib (To Do list title comes out wrong)
+\makeatletter\let\chapter\@undefined\makeatother % Undefine \chapter for todonotes
+
+% Define note commands
+\newcommand{\smalltodo}[2][] {\todo[caption={#2}, size=\scriptsize, fancyline, #1] {\begin{spacing}{.5}#2\end{spacing}}}
+\newcommand{\rhs}[2][]{\smalltodo[color=green!30,#1]{{\bf RS:} #2}}
+\newcommand{\rhsnolist}[2][]{\smalltodo[nolist,color=green!30,#1]{{\bf RS:} #2}}
+\newcommand{\rhsfn}[2][]{%  To be used in footnotes (and in floats)
+\renewcommand{\marginpar}{\marginnote}%
+\smalltodo[color=green!30,#1]{{\bf RS:} #2}%
+\renewcommand{\marginpar}{\oldmarginpar}}
+%\newcommand{\textnote}[1]{\ifnotes{{\noindent\color{red}#1}}{}}
+\newcommand{\textnote}[1]{\ifnotes{{\colorbox{yellow}{{\color{red}#1}}}}{}}
+
+% Command to start a new page, starting on odd-numbered page if twoside option 
+% is selected above
+\newcommand{\clearRHS}{\clearpage\thispagestyle{empty}\cleardoublepage\thispagestyle{plain}}
+
+\newcommand{\expect}[1]{\mathbb{E}\left(#1\right)}
+
+% Number paragraphs and subparagraphs and include them in TOC
+\setcounter{tocdepth}{5}
+
+% JFE-specific includes:
+
+\usepackage{indentfirst} % Indent first sentence of a new section.
+\usepackage{jfe}         % JFE-specific formatting of sections, etc.
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{condition}[theorem]{Condition}
+
+\input{ee.sty}
+
+\numberwithin{equation}{section}
+\numberwithin{table}{section}
+\numberwithin{figure}{section}
+
+\begin{document}
+
+\setlist{noitemsep}  % Reduce space between list items (itemize, enumerate, etc.)
+%\onehalfspacing      % Use 1.5 spacing
+% Use endnotes instead of footnotes - redefine \footnote command
+
+\title{Long Run Effect in Heterogeneous Panel Data Model: A Bayesian Approach}
+
+\author{Cheung Ying Lun\thanks{E-mail address: \texttt{yinglun.cheung@stud.uni-frankfurt.de}}}
+\affil{}
+
+\date{}              % No date for final submission
+
+% Create title page with no page number
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\singlespacing
+
+\maketitle
+
+\vspace{-.2in}
+\input{./_sections/00_abstract.tex}
+
+\medskip
+
+%\noindent \textit{JEL classification}: G12, G38.
+
+\medskip
+%\noindent \textit{Keywords}: Factor Models, Principal Component Analysis.
+
+\thispagestyle{empty}
+
+\clearpage
+
+\onehalfspacing
+\setcounter{footnote}{0}
+\renewcommand{\thefootnote}{\arabic{footnote}}
+\setcounter{page}{1}
+
+\input{./_sections/01_intro.tex}
+\input{./_sections/02_litrev.tex}
+\input{./_sections/03_model.tex}
+\input{./_sections/04_estimation.tex}
+
+
+\clearpage
+\appendix
+\input{./_sections/A01_derivations.tex}
+\clearpage
+%\input{./_sections/A02_figures.tex}
+
+\clearpage
+\appendix
+
+
+\clearpage
+
+% Bibliography.
+%\nocite{*}		%Display all.
+\bibliographystyle{jfe}
+\bibliography{bayesian}
+
+
+\end{document}

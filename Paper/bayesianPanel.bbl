@@ -1,0 +1,22 @@
+\begin{thebibliography}{4}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Amir-Ahmadi and Uhlig(2009)}]{FAVAR_sign}
+Amir-Ahmadi, P., Uhlig, H., 2009. Measuring the effects of monetary policy: A
+  {B}ayesian {FAVAR} approach with sign restriction, mimeo.
+
+\bibitem[{Bernanke et~al.(2005)Bernanke, Boivin, and Eliasz}]{FAVAR}
+Bernanke, B.~S., Boivin, J., Eliasz, P., 2005. Measuring the effects of
+  monetary policy: A factor-augmented vector autoregressive ({FAVAR}) approach.
+  Quarterly Journal of Economics 120, 387--422.
+
+\bibitem[{Chudik et~al.(2015)Chudik, Mohaddes, Pesaran, and Raissi}]{CCE15}
+Chudik, A., Mohaddes, K., Pesaran, M.~H., Raissi, M., 2015. Long-run effects in
+  large heterogenous panel data models with cross-sectionally correlated
+  errors. USC INET Working Paper No. 15-05 .
+
+\bibitem[{Kim and Nelson(1999)}]{Gibbs}
+Kim, C.-J., Nelson, C.~R., 1999. State-Space Models with Regime Switching. MIT
+  Press.
+
+\end{thebibliography}

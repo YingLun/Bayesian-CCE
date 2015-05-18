@@ -1,0 +1,16 @@
+\section{Estimation}
+Notice that Eq.\eqref{eq_model} reduces to a standard Bayesian VAR (BVAR) problem if $\vupsilon_i=\vzeros$ for all $i$ or when $\vf_t$ is observed, we can break down the problem into two steps:
+\begin{enumerate}
+\item
+Estimate $\vf_t$ from $\mX_t$ by Gibbs sampling.
+
+\item
+Conditional on the estimated $\widehat\vf_t$, estimate the BVAR model.
+\end{enumerate}
+
+Since the BVAR is standard in the second step, we may add identifying restrictions like sign restriction (e.g. ...) and long run restriction (e.g. ...) in the identification step.
+
+\subsection{State-Space Representation and Kalman Filter}
+Notice that the undesirable features of $u_{it}$ that it is correlated with $\vx_{it}$ and is autocorrelated are due to the assumption that it depends on the common factors $\vf_t$. The problem can be circumvented if we can explicitly include $\vf_t$ in the estimation of the BVAR model. If we treat $\vf_t$ as $mT$ additional parameters, we can in spirit estimate $\vf_t$ together with other parameters, or in a sequential way, estimate $\vf_t$ and then the remaining parameters conditional on the estimated $\widehat\vf_t$.
+
+Therefore, as a first step, we estimate $\vf_t$ from the observed data. We notice that $\vx_t$ and $\vf_t$ can be written in a linear and Gaussian state-space representation. Thus, by treating it as a factor-augmented VAR (FAVAR) model, we follow the procedures of \cite{FAVAR} and obtain draws of $\vf_t$ from the posterior distribution.

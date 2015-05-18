@@ -1,0 +1,64 @@
+\section{The Model}
+In this paper we consider the heterogeneous panel data model
+\begin{equation}
+\label{eq_model}
+	y_{it}=\sum^{p_i}_{j=1}\psi_{ij}y_{i,t-j}+\sum^{q_i}_{j=0}\vbeta_{ij}'\vx_{i,t-j}+u_{it},\qquad
+	u_{it}=\vupsilon'_i\vf_t+\epsi_{it}.
+\end{equation}
+Here indices run for cross-sectional dimension from $i=1,\dots,N$, and for time-series dimension $t=1,\dots,T$. The disturbance term $u_{it}$ is correlated with the $k$-dimension (weakly) exogenous variables $\vx_{it}$, which is modeled by assuming $\vx_{it}$ follows an $m$-factor model with the same factors of $u_{it}$, i.e.
+\begin{equation}
+	\vx_{it}=\mGamma_i\vf_t+\ve_{it},\qquad
+	\ve_{it}\distr\text{i.i.d.}~\calN(\vzeros_k,\mR_{e_i}),
+\end{equation}
+where $\mGamma_i$ are $k\times m$ matrices and $\vzeros_k$ indicates a $k$-dimension zero vector. $\vx_{it}$ is correlated cross-sectionally, i.e. across $i$. Stacking $\vx_{it}$ into a vector for all $i=1,\dots,N$, we model the cross-sectional correlation by
+\begin{equation}
+\label{eq_X}
+	\vx_t=\mGamma \vf_t+\ve_t,\qquad
+	\ve_t\distr\text{i.i.d.}~\calN(\vzeros_{Nk},\mR),
+\end{equation}
+where 
+$\vx_t=	
+	\begin{pmatrix}
+		\vx_{1t}'&\dots&\vx_{Nt}'
+	\end{pmatrix}'$ is $Nk\times1$,
+$\mGamma=
+	\begin{pmatrix}
+		\mGamma_1'&\dots&\mGamma_N'
+	\end{pmatrix}'$ is $Nk\times m$,
+$\ve_t=
+	\begin{pmatrix}
+		\ve_{1t}'&\dots&\ve_{Nt}'
+	\end{pmatrix}'$ is $Nk\times1$, and 
+$\mR$ is $Nk\times Nk$ with diagonal blocks of $\mR_{e_i}$, and the off-diagonal elements, possibly non-zero, are not restricted.
+
+We assume the common factors to follow a Gaussian VAR($p$) model
+\begin{equation}
+\label{eq_f}
+	\vf_t=\sum^{p}_{j=1}\mPhi_j\vf_{t-j}+\vnu_t,\qquad
+	\vnu_t\distr\text{i.i.d.}~\calN(\vzeros_{Nk},\mQ_\nu).
+\end{equation}
+
+Finally the disturbance term $u_{it}$ is modeled similarly as $\vx_{it}$. Stacking all $N$ disturbance terms, we have
+\begin{equation}
+	\vu_t=\mUpsilon\vf_t+\vepsi_t,\qquad
+	\vepsi_t\distr\text{i.i.d.}~\calN(\vzeros_{N},\mSigma),
+\end{equation}
+where
+$\vu_t=	
+	\begin{pmatrix}
+		u_{1t}&\dots&u_{Nt}
+	\end{pmatrix}'$ is a $N\times1$ vector,
+$\mUpsilon=
+	\begin{pmatrix}
+		\vupsilon_1'&\dots&\vupsilon_N'
+	\end{pmatrix}'$ is $N\times m$,
+$\vepsi_t=	
+	\begin{pmatrix}
+		\epsi_{1t}&\dots&\epsi_{Nt}
+	\end{pmatrix}'$ and $\mSigma$ an $N\times N$ covariance matrix.
+	
+The vector of long-run coefficients for each $i$ is defined by
+\begin{equation}
+	\vtheta_i=\frac{\sum^{q_i}_{j=0}\vbeta_{ij}}{1-\sum^{p_i}_{j=1}\psi_{ij}}.
+\end{equation}
+This model, in particular the long-run effect in this model, is studied by \cite{CCE15} in a frequentist approach. They used the cross-sectional (weighted) average of $y_{it}$ and $\vx_{it}$ as instruments and suggested a mean-group and a pooled estimator of $\vtheta=\EE{\vtheta_i}$. In this paper, we tackle the problem in a Bayesian approach.

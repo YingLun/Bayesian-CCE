@@ -1,0 +1,172 @@
+\section{Derivations}
+\subsection{Estimation of Common Factors}
+In this section we show the procedures of estimation of the common factors $\vf_t$. 
+\subsubsection{State-Space Representation}
+Notice that Eq.\eqref{eq_X} and \eqref{eq_f} are actually the state-space representation of a system. Writing Eq.\eqref{eq_f} in companion form and expressing Eq.\eqref{eq_X} in terms of 
+$\widetilde\vf_t=
+	\begin{pmatrix}
+		\vf_t'&\dots&\vf_{t-p+1}'
+	\end{pmatrix}'$,
+we have
+\begin{align}
+\label{eq_X_com}
+	\vx_t&=\widetilde\mGamma\widetilde\vf_t+\ve_t\\
+\label{eq_f_com}
+	\widetilde\vf_t&=\widetilde\mPhi\widetilde\vf_{t-1}+\widetilde\vnu_t,\qquad
+		\widetilde\vnu_t\distr\text{i.i.d.}~\calN(\vzeros_{pm},\mQ),
+\end{align}
+where 
+$\widetilde\mGamma=
+	\begin{pmatrix}
+		\mGamma&\mZeros_{Nk\times m}&\dots&\mZeros_{Nk\times m}
+	\end{pmatrix}'$
+is $Nk\times pm$ and
+\begin{equation*}
+	\widetilde\mPhi=
+    	\begin{pmatrix}
+    		\mPhi_1&\mPhi_2&\dots&\mPhi_{p-1}&\mPhi_p\\
+			\mI_m&\mZeros_m&\dots&\mZeros_m&\mZeros_m\\
+			\mZeros_m&\mI_m&\dots&\mZeros_m&\mZeros_m\\
+			\vdots&&\ddots&&\vdots\\
+			\mZeros_m&\dots&\dots&\mI_m&\mZeros_m
+    	\end{pmatrix},\qquad
+	\mQ=
+		\begin{pmatrix}
+			\mQ_\nu&\mZeros_{p\times(m-1)p}\\
+			\mZeros_{(m-1)p\times p}&\mZeros_{(m-1)p}
+		\end{pmatrix}
+\end{equation*}
+are both $pm\times pm$.
+Note that Eq.\eqref{eq_X_com} is essentially the same as Eq.\eqref{eq_X}, and Eq.\eqref{eq_f_com} is just the companion form of Eq.\eqref{eq_f}, as mentioned already above. Now the system is similar to that of \cite{FAVAR} and \cite{FAVAR_sign} and we can estimate $\widetilde\vf_f$ by the Kalman filter with the same procedures.
+
+\subsubsection{Gibbs Sampling and Kalman Smoothing}
+Since $\ve_t$ and $\widetilde\vnu_t$ are independent and Normally distributed, Eq.\eqref{eq_X_com} and \eqref{eq_f_com} allow us to apply Gibbs sampling and Kalman smoothing in a standard way. The detailed steps can be found in \cite{FAVAR}, who follows \cite{Gibbs}. Nevertheless, it is still worthwhile to outline the procedures here to avoid confusions in notations.
+
+Let $\mTheta=(\widetilde\mGamma,\mR,\widetilde\mPhi,\mQ)$ be the set of parameters and let $\vx^T$ and $\widetilde\vf^T$ denote the history of $\vx_t$ and $\vf_t$ for $t=1,\dots,T$. The multi-move Gibbs sampling involves three steps:
+\begin{enumerate}
+\item
+\textit{Choosing a set of starting value $\mTheta_0$}:\\
+A variety of $\mTheta_0$ should be chosen for robustness check. A `meaningful' starting value, e.g. the principal components estimation of Eq.\eqref{eq_X} and a VAR estimation of Eq.\eqref{eq_f}, is suggested in \cite{FAVAR} to improve computational efficiency. Notice that for all $m\times m$ orthonormal matrix $\mA$, we can re-write Eq.\eqref{eq_X} as
+\begin{equation}
+	\vx_t
+		=\mGamma\mA\mA'\vf_t+\ve_t
+		=\mGamma^*\vf_t^*+\ve_t
+\end{equation}
+without changing the likelihood functions, one may want to restrict the principal-component identification of $\mGamma$ and $\vf_t$ by for example fixing the upper $m\times m$ block of $\mGamma$ to be equal to the identity matrix.
+
+\item 
+\textit{Densities of $\vf_t$ conditional on $\mTheta_i$ and $\vx^T$}\\
+Notice that due to the Markov property of Eq.\eqref{eq_f_com}, we can write the joint (conditional) density of $\widetilde\vf^T$ as products of conditional densities
+\begin{align}
+	p\left(\left.\widetilde\vf^T\right|\mTheta_i,\vx^T\right)
+		&=p\left(\left.\widetilde\vf_1\right|\mTheta_i,\vx^T\right)
+			\prod_{t=2}^Tp\left(\left.\widetilde\vf_t\right|\widetilde\vf_{t-1},\mTheta_i,\vx^T\right)\\
+\label{likelihood_back}
+		&=p\left(\left.\widetilde\vf_T\right|\mTheta_i,\vx^T\right)
+			\prod_{t=1}^{T-1}p\left(\left.\widetilde\vf_t\right|\widetilde\vf_{t+1},\mTheta_i,\vx^T\right).
+\end{align}
+Moreover, since the system is Gaussian and linear, we can apply the technique of Kalman smoothing to estimate $\widetilde\vf_t$. We apply here the Rauch-Tung-Striebel (RTS) smoother, a forward-backward algorithm to obtain an estimate of $\widetilde\vf_t$. The forward part is the same as the common Kalman filter. We define the usual notations of conditional expectations 
+$\widetilde\vf_{t|s}=\EE{\left.\widetilde\vf_t\right|\mTheta_i,\vx^s}$
+and
+$\widetilde\vf_{t|s,\widetilde\vf_\tau}=\EE{\left.\widetilde\vf_t\right|\widetilde\vf_\tau,\mTheta_i,\vx^s}$,
+as well as the conditional covariance matrices
+$\mQ_{t|s}=\cov\left(\widetilde\vf_{t|s}\right)$
+and
+$\mQ_{t|s,\widetilde\vf_\tau}=\cov\left(\widetilde\vf_{t|s,\widetilde\vf_\tau}\right)$.
+Moreover, we let 
+$\veta_{t|t-1}=\vx_t-\widetilde\mGamma\widetilde\vf_{t|t-1}$
+denote the prediction error and
+$\mH_{t|t-1}=\widetilde\mPhi\mQ_{t|t-1}\widetilde\mPhi'+\mR$
+its covariance matrix. Initializing with
+$\widetilde\vf_{1|0}=\vzeros_{mp}$
+and
+$\mQ=\mI_{mp}$,
+we have
+\begin{align}
+	\widetilde\vf_{t|t}&=\widetilde\vf_{t|t-1}+\mQ_{t|t-1}\widetilde\mPhi'\mH_{t|t-1}^{-1}\veta_{t|t-1}\\
+	\mQ_{t|t}&=\mQ_{t|t-1}-\mQ_{t|t-1}\widetilde\mPhi'\mH_{t|t-1}^{-1}\widetilde\mPhi\mQ_{t|t-1}.
+\end{align}
+From Eq.\eqref{eq_f_com}, it is obvious that $\widetilde\vf_{t|t-1}=\widetilde\mPhi\widetilde\vf_{t-1|t-1}$ and $\mQ_{t|t-1}=\widetilde\mPhi\mQ_{t-1|t-1}\widetilde\mPhi'+\mQ$. Since from Eq.\eqref{likelihood_back} we have
+\begin{align}
+\label{eq_f_T_dist}
+	\left.\widetilde\vf_T\right|\vx^T,\mTheta_i&\distr\calN\left(\widetilde\vf_{T|T},\mQ_{T|T}\right),\\
+	\left.\widetilde\vf_t\right|\widetilde\vf_{t+1},\vx^T,\mTheta_i&\distr\calN\left(\widetilde\vf_{t|t,\widetilde\vf_{t+1}},\mQ_{T|T,\widetilde\vf_{t+1}}\right),
+\end{align}
+we can draw $\widetilde\vf_T$ from Eq.\eqref{eq_f_T_dist}, in which the density parameters can be obtained from the last iteration of the Kalman filter described above. For the remaining periods, we can now apply the backward pass of the Kalman smoother according to
+\begin{align}
+	\widetilde\vf_{t|t+1}&=\widetilde\vf_{t|t}+\mC_t\left(\widetilde\vf_{t+1|t+1}-\widetilde\vf_{t+1|t}\right)\\
+	\mQ_{t|t+1}&=\mQ_{t|t}+\mC_t(\mQ_{t+1|t+1}-\mQ_{t+1|t})\mC_t'\\
+	\mC_t&=\mQ_{t|t}\mPhi'\mQ_{t+1|t}^{-1}.
+\end{align}
+However, notice that $\mQ$ is singular if $p>1$, \cite{Gibbs} and \cite{FAVAR_sign} suggest that we only use the upper $m\times m$ block of all $\mQ$ matrices and the first $m$ rows of the corresponding vectors and matrices. The resulting $\vf_{t|T}$ and $\mQ_{t|T}$ will not contain lags.
+
+\item 
+\textit{Densities of $\mTheta_{i+1}$ conditional on $\vf^T$ and $\vx^T$}\\
+Now given the observed data $\vx^T$ and the estimated unobserved common factors $\widehat\vf^T$ estimated through Kalman smoothing, we estimate a new set of parameters $\theta_{i+1}$. The state and observation equations can be estimated separately. 
+
+\begin{enumerate}
+\item
+\textit{Observation equation}\\
+Notice that Eq.\eqref{eq_X} is just a system of standard regression equations, we can apply OLS equation by equation to obtain estimates of parameter $\widehat\vgamma_i$ and of residuals $\widehat\ve_i$ for the $i$-th equation. If we assume further that $\mR$ is diagonal, as in \cite{FAVAR} and \cite{FAVAR_sign}, we can set $R_{ij}=0$ for $i\ne j$, and impose an Inverse Gamma prior for $R_{ii}$, more specifically,
+\begin{equation}
+	R_{ii}\distr\calI\calG(\alpha,\beta).
+\end{equation}
+Here $R_{ij}$ denotes the $(i,j)$-th element of $\mR$. The posterior of $R_{ii}$ is given by
+\begin{equation}
+	R_{ii}|\vx^T,\widehat\vf^T\distr\calI\calG(\alpha^*,\beta^*)
+\end{equation}
+where
+\begin{align}
+	\alpha^*&=\alpha+\widehat\ve_i'\widehat\ve_i+\widehat\vgamma_i'\left[\mM_0^{-1}+(\widehat{\vf}^{T'}\widehat\vf^T)^{-1}\right]^{-1}\widehat\vgamma_i\\
+	\beta^*&=\beta+T.
+\end{align}
+\cite{FAVAR} chooses $\alpha=3$, $\beta=0.001$ and $\mM_0=\mI$ to obtain a diffuse prior. $\mM_0^{-1}$ is the variance parameter in the prior on the coefficients $\vgamma_i$, which has conditional prior distribution
+\begin{equation}
+	\vgamma_i|R_{ii}\distr\calN(\vzeros_m,R_{ii}\mM_0^{-1}).
+\end{equation}
+If we assume more generally that $\mR$ is not diagonal, we can impose the Normal-Inverse Wishart prior, namely
+\begin{align}
+	\mR&\distr\calW^{-1}(\mR_0,Nk)\\
+	\vec(\mGamma)|\mR&\distr\calN(\vzeros_{Nkm},\mR\otimes\mOmega_0).
+\end{align}
+$\mOmega_0$ is set as $\mI_m$ so that each regressor is equally likely to be non-zero, and that coefficient of the $i$-th regressor is likely to be independent of that of the $j$-th regressor, where $i\ne j$. $\mR_0$ is set as the covariance matrix of OSL residuals. The posterior distribution is given by
+\begin{align}
+	\mR|\vx^T,\widehat\vf^T&\distr\calW^{-1}(\overline\mR,Nk+T)\\
+	\vec(\mGamma)|\mR,\vx^T,\widehat\vf^T&\distr\calN\left(\vec(\overline\mGamma),\mR\otimes\overline\mOmega\right),
+\end{align}
+where
+\begin{align}
+	\overline\mR&=\mR_0+\widehat\mE'\widehat\mE+\widehat\mGamma'\left[\mOmega_0+({\vf^T}'\vf^T)^{-1}\right]^{-1}\widehat\mGamma\\
+	\overline\mGamma&=\overline\mOmega(\widehat\vf^{T'}\widehat\vf^T)\widehat\mGamma\\
+	\overline\mOmega&=(\mOmega_0^{-1}+\widehat\vf^{T'}\widehat\vf^T)^{-1}
+\end{align}
+and $\widehat\mE$ is the residual matrix.
+
+\item
+\textit{State equation}\\
+Eq.\eqref{eq_f} is a standard VAR model and sampling is done in a similar manner as in the observation equation. We assume again the Normal-Inverse Wishart prior
+\begin{align}
+	\mQ_\nu&\distr\calW^{-1}(\mQ_{\nu0},m)\\
+	\vec(\mPhi)|\mQ_\nu&\distr\calN(\vzeros_{pm},\mQ_\nu\otimes\mOmega_{f0}),
+\end{align}
+where
+$\mPhi=
+	\begin{pmatrix}
+		\mPhi_1'&\dots&\mPhi_p'
+	\end{pmatrix}'$.
+$\mOmega_{f0}$ is set as in \cite{FAVAR}, i.e. such that the prior variance of parameter on $j$ lagged $i_1$-th variable in $i_2$-th equation equals $\sigma_{i_2}^2/j\sigma_{i_1}^2$. The posterior distribution is given by
+\begin{align}
+	\mQ_\nu|\vx^T,\widehat\vf^T&\distr\calW^{-1}(\overline\mQ_\nu,m+T)\\
+	\vec(\mPhi)|\mQ_\nu,\vx^T,\widehat\vf^T&\distr\calN\left(\vec(\overline\mPhi),\mR\otimes\overline\mOmega_f\right),
+\end{align}
+where
+\begin{align}
+	\overline\mQ_\nu&=\mQ_{\nu0}+\widehat\mV'\widehat\mV+\widehat\mPhi'\left[\mOmega_{f0}+({\vf^{T-1}}'\vf^{T-1})^{-1}\right]^{-1}\widehat\mGamma\\
+	\overline\mPhi&=\overline\mOmega_f(\widehat\vf^{T-1'}\widehat\vf^{T-1})\widehat\mPhi\\
+	\overline\mOmega_f&=(\mOmega_{f0}^{-1}+\widehat\vf^{T-1'}\widehat\vf^{T-1})^{-1}
+\end{align}
+and $\widehat\mV$ is the OLS residual matrix. As in \cite{CCE15}, stationary of $\vf_t$ is not enforced. Thus, we do not drop draws that suggest non-stationary like what is done in \cite{FAVAR} and \cite{FAVAR_sign}.
+\end{enumerate}
+At this point, we have computed the posterior distribution of parameters required. We can then draw from it to obtain $\mTheta_{i+1}$ for the next run.
+\end{enumerate}
+We record the draws from the second and third steps above after $\underline I$ iterations, when convergence is ensured after then.
