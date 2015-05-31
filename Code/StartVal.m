@@ -1,7 +1,14 @@
 function [Gamma,R,Phi,Q,f] = StartVal(X,nlag,m,method)
 %This function return the starting value of parameters.
-%   Method 1: OLS estiamtes
-%   Method 2: Null
+%
+%   INPUT:
+%         X = T*k matrix of observations
+%      nlag = p (scalar): number of lags
+%         m = (scalar): number of factors
+%    method = 1: OLS estimates
+%           = 2: Null
+
+
 
 if nargin == 3
     method = 1;
@@ -21,6 +28,7 @@ switch method
         R = e'*e/(T-k);
         % Eq.2
         [Phi,Res] = VAR_SUR(f,nlag);
+        Phi = reshape(Phi,[m,m,nlag]);
         Q = cov(Res);
     case 2
         

@@ -76,11 +76,11 @@ $\mQ_{t|s,\widetilde\vf_\tau}=\cov\left(\widetilde\vf_{t|s,\widetilde\vf_\tau}\r
 Moreover, we let 
 $\veta_{t|t-1}=\vx_t-\widetilde\mGamma\widetilde\vf_{t|t-1}$
 denote the prediction error and
-$\mH_{t|t-1}=\widetilde\mPhi\mQ_{t|t-1}\widetilde\mPhi'+\mR$
+$\mH_{t|t-1}=\widetilde\mGamma\mQ_{t|t-1}\widetilde\mGamma'+\mR$
 its covariance matrix. Initializing with
 $\widetilde\vf_{1|0}=\vzeros_{mp}$
 and
-$\mQ=\mI_{mp}$,
+$\mQ_{1|0}$ be a diagonal matrix with only the first $m$ diagonal elements being one,
 we have
 \begin{align}
 	\widetilde\vf_{t|t}&=\widetilde\vf_{t|t-1}+\mQ_{t|t-1}\widetilde\mPhi'\mH_{t|t-1}^{-1}\veta_{t|t-1}\\
@@ -94,8 +94,8 @@ From Eq.\eqref{eq_f_com}, it is obvious that $\widetilde\vf_{t|t-1}=\widetilde\m
 \end{align}
 we can draw $\widetilde\vf_T$ from Eq.\eqref{eq_f_T_dist}, in which the density parameters can be obtained from the last iteration of the Kalman filter described above. For the remaining periods, we can now apply the backward pass of the Kalman smoother according to
 \begin{align}
-	\widetilde\vf_{t|t+1}&=\widetilde\vf_{t|t}+\mC_t\left(\widetilde\vf_{t+1|t+1}-\widetilde\vf_{t+1|t}\right)\\
-	\mQ_{t|t+1}&=\mQ_{t|t}+\mC_t(\mQ_{t+1|t+1}-\mQ_{t+1|t})\mC_t'\\
+	\vf_{t|T}&=\vf_{t|t}+\mC_t\left(\vf_{t+1|T}-\vf_{t+1|t}\right)\\
+	\mQ_{t|T}&=\mQ_{t|t}+\mC_t(\mQ_{t+1|T}-\mQ_{t+1|t})\mC_t'\\
 	\mC_t&=\mQ_{t|t}\mPhi'\mQ_{t+1|t}^{-1}.
 \end{align}
 However, notice that $\mQ$ is singular if $p>1$, \cite{Gibbs} and \cite{FAVAR_sign} suggest that we only use the upper $m\times m$ block of all $\mQ$ matrices and the first $m$ rows of the corresponding vectors and matrices. The resulting $\vf_{t|T}$ and $\mQ_{t|T}$ will not contain lags.
@@ -113,6 +113,7 @@ Notice that Eq.\eqref{eq_X} is just a system of standard regression equations, w
 \end{equation}
 Here $R_{ij}$ denotes the $(i,j)$-th element of $\mR$. The posterior of $R_{ii}$ is given by
 \begin{equation}
+\label{post_dist_Rii}
 	R_{ii}|\vx^T,\widehat\vf^T\distr\calI\calG(\alpha^*,\beta^*)
 \end{equation}
 where
@@ -122,9 +123,19 @@ where
 \end{align}
 \cite{FAVAR} chooses $\alpha=3$, $\beta=0.001$ and $\mM_0=\mI$ to obtain a diffuse prior. $\mM_0^{-1}$ is the variance parameter in the prior on the coefficients $\vgamma_i$, which has conditional prior distribution
 \begin{equation}
-	\vgamma_i|R_{ii}\distr\calN(\vzeros_m,R_{ii}\mM_0^{-1}).
+	\vgamma_i|R_{ii}\distr\calN(\vgamma_0,R_{ii}\mM_0^{-1}),
 \end{equation}
-If we assume more generally that $\mR$ is not diagonal, we can impose the Normal-Inverse Wishart prior, namely
+where we choose $\vgamma_0=\vzeros_m$. The posterior distribution of $\vgamma_i$ is then given by
+\begin{equation}
+	\vgamma_i|\vx^T,\widehat\vf^T,\widehat R_{ii}\distr\calN(\overline\vgamma_i,\widehat R_{ii}\mM_i^{-1}),
+\end{equation}
+where 
+\begin{equation}
+	\overline\vgamma_i = \mM_i\left[\mM_0^{-1}\vgamma_0+\left(\widehat{\vf}^{T'}\widehat\vf^T\widehat\vgamma_i\right)\right]
+\end{equation}
+$\widehat R_{ii}$ 
+is drawn from Eq.\eqref{post_dist_Rii}, and 
+$\mM_i=\mM_0+\widehat{\vf}^{T'}\widehat\vf^T$. If we assume more generally that $\mR$ is not diagonal, we can impose the Normal-Inverse Wishart prior, namely
 \begin{align}
 	\mR&\distr\calW^{-1}(\mR_0,Nk)\\
 	\vec(\mGamma)|\mR&\distr\calN(\vzeros_{Nkm},\mR\otimes\mOmega_0).
@@ -152,16 +163,16 @@ Eq.\eqref{eq_f} is a standard VAR model and sampling is done in a similar manner
 where
 $\mPhi=
 	\begin{pmatrix}
-		\mPhi_1'&\dots&\mPhi_p'
-	\end{pmatrix}'$.
+		\mPhi_1&\dots&\mPhi_p
+	\end{pmatrix}$.
 $\mOmega_{f0}$ is set as in \cite{FAVAR}, i.e. such that the prior variance of parameter on $j$ lagged $i_1$-th variable in $i_2$-th equation equals $\sigma_{i_2}^2/j\sigma_{i_1}^2$. The posterior distribution is given by
 \begin{align}
 	\mQ_\nu|\vx^T,\widehat\vf^T&\distr\calW^{-1}(\overline\mQ_\nu,m+T)\\
-	\vec(\mPhi)|\mQ_\nu,\vx^T,\widehat\vf^T&\distr\calN\left(\vec(\overline\mPhi),\mR\otimes\overline\mOmega_f\right),
+	\vec(\mPhi)|\mQ_\nu,\vx^T,\widehat\vf^T&\distr\calN\left(\vec(\overline\mPhi),\mQ_\nu\otimes\overline\mOmega_f\right),
 \end{align}
 where
 \begin{align}
-	\overline\mQ_\nu&=\mQ_{\nu0}+\widehat\mV'\widehat\mV+\widehat\mPhi'\left[\mOmega_{f0}+({\vf^{T-1}}'\vf^{T-1})^{-1}\right]^{-1}\widehat\mGamma\\
+	\overline\mQ_\nu&=\mQ_{\nu0}+\widehat\mV'\widehat\mV+\widehat\mPhi'\left[\mOmega_{f0}+({\vf^{T-1}}'\vf^{T-1})^{-1}\right]^{-1}\widehat\mPhi\\
 	\overline\mPhi&=\overline\mOmega_f(\widehat\vf^{T-1'}\widehat\vf^{T-1})\widehat\mPhi\\
 	\overline\mOmega_f&=(\mOmega_{f0}^{-1}+\widehat\vf^{T-1'}\widehat\vf^{T-1})^{-1}
 \end{align}

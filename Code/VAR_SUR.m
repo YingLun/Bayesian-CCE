@@ -1,5 +1,14 @@
 function [beta,res] = VAR_SUR(X,nlag,intercept)
 %This function estimate a VAR(p) model by SUR-OLS.
+%   INPUT:
+%        X  = T*k matrix of observations
+%     nlag  = p (scalar): number of lags
+% intercept = logical, if intercept term is needed. (default = false)
+%
+%   OUTPUT:
+%      beta = pN(+1)*k matrix of slope coefficients
+%       res = (T-p)*k matrix of residuals
+
 
 if nargin < 3
     intercept=false;

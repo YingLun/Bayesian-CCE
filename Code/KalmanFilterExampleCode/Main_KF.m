@@ -2,8 +2,7 @@
 % x(t) = C x(t-1) + u(t)       u(t) ~ N(0,Q)
 %% Housekeeping
 clear('all'); close('all'); clc;
-main_path = 'C:\Users\Pooyan\Dropbox\Teaching\WS2014\Bayesiann Econometrics\MatlabExcercise\KalmanFilterSimpleExample';
-cd(main_path)
+
 %% Simulate Data
 T       = 200;
 N       = 1;
